@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "E:\\SDL_Lib\\SDL2-devel-2.28.1-VC\\SDL2-2.28.1\\include",
+                "E:\\SDL_Lib\\SDL2_ttf-devel-2.20.2-VC\\SDL2_ttf-2.20.2\\include",
+                "E:\\SDL_Lib\\SDL2_mixer-devel-2.6.3-VC\\SDL2_mixer-2.6.3\\include",
+                "E:\\SDL_Lib\\SDL2_image-devel-2.6.3-VC\\SDL2_image-2.6.3\\include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "D:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
