@@ -100,30 +100,7 @@ void Game_Title::image_render()
 
 /*动画的渲染相关信息*/
 void Game_Title::animation_render()
-{   /*
-    int block_width = 108 / 3; // 36
-    int block_height = 50;
-
-    wait_rect_frame_1.x = 0;
-    wait_rect_frame_1.y = 0;
-    wait_rect_frame_1.w = block_width;
-    wait_rect_frame_1.h = block_height;
-
-    wait_rect_frame_2.x = block_width;
-    wait_rect_frame_2.y = 0;
-    wait_rect_frame_2.w = block_width;
-    wait_rect_frame_2.h = block_height;
-
-    wait_rect_frame_3.x = block_width * 2;
-    wait_rect_frame_3.y = 0;
-    wait_rect_frame_3.w = block_width;
-    wait_rect_frame_3.h = block_height;
-
-    wait_dest_rect.x = 25;
-    wait_dest_rect.y = WINDOW_HEIGHT - block_height;
-    wait_dest_rect.w = block_width;
-    wait_dest_rect.h = block_height;
-    */
+{ 
     Get_Wait_Frame_Format(&frame_rect);
     Load_Bobby_Animation(&animation, rander);
 }
@@ -188,37 +165,6 @@ bool Game_Title::window_render_resource()
     map_render();
    
     return true;
-}
-
-void Game_Title::Play_Wait_Animation(Frame_Rect *frame_rect, Animation *animation,SDL_Renderer *render)
-{
-    int current_frame = 0;
-    current_frame++;
-            switch (current_frame)
-            {
-            case 1:
-                SDL_RenderCopy(rander, animation->wait_texture, &frame_rect->wait_rect_frame_1, &frame_rect->wait_dest_rect);
-                SDL_RenderPresent(rander);
-                SDL_RenderClear(rander);
-                SDL_Delay(25);
-                break;
-            case 2:
-                SDL_RenderCopy(rander, animation->wait_texture, &frame_rect->wait_rect_frame_2, &frame_rect->wait_dest_rect);
-                SDL_RenderPresent(rander);
-                SDL_RenderClear(rander);
-                SDL_Delay(25);
-                break;
-            case 3:
-                SDL_RenderCopy(rander, animation->wait_texture, &frame_rect->wait_rect_frame_3, &frame_rect->wait_dest_rect);
-                SDL_RenderPresent(rander);
-                SDL_RenderClear(rander);
-                SDL_Delay(25);
-                break;
-            default:
-                current_frame = 0;
-                SDL_RenderClear(rander);
-                break;
-            }
 }
 
 /*事件捕获操作*/
@@ -332,34 +278,6 @@ bool Game_Title::get_events()
             //SDL_RenderPresent(rander);
 
             /*播放渲染兔子跺脚动画*/
-            /*
-            current_frame++;
-            switch (current_frame)
-            {
-            case 1:
-                SDL_RenderCopy(rander, animation.wait_texture, &wait_rect_frame_1, &wait_dest_rect);
-                SDL_RenderPresent(rander);
-                SDL_RenderClear(rander);
-                SDL_Delay(25);
-                continue;
-            case 2:
-                SDL_RenderCopy(rander, animation.wait_texture, &wait_rect_frame_2, &wait_dest_rect);
-                SDL_RenderPresent(rander);
-                SDL_RenderClear(rander);
-                SDL_Delay(25);
-                continue;
-            case 3:
-                SDL_RenderCopy(rander, animation.wait_texture, &wait_rect_frame_3, &wait_dest_rect);
-                SDL_RenderPresent(rander);
-                SDL_RenderClear(rander);
-                SDL_Delay(25);
-                continue;
-            default:
-                current_frame = 0;
-                SDL_RenderClear(rander);
-                continue;
-            }
-            */
             current_frame++;
             switch (current_frame)
             {
@@ -386,8 +304,6 @@ bool Game_Title::get_events()
                 SDL_RenderClear(rander);
                 continue;
             }
-            
-            //Play_Wait_Animation(&frame_rect, &animation, rander);
         }
         SDL_RenderPresent(rander);
         render_end = SDL_GetTicks() - render_start;
@@ -396,7 +312,6 @@ bool Game_Title::get_events()
         {
             SDL_Delay(frame_duration - render_end);
         }
-        
     }
     return if_quit;
 }

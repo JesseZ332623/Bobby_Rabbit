@@ -88,8 +88,7 @@ public:
     void animation_render();    /*兔子动画的渲染信息*/
     void map_render();          /*地图的动画渲染信息*/
 
-    /*播放 不耐烦的等待 动画*/
-    void Play_Wait_Animation(Frame_Rect *frame_rect, Animation *animation,SDL_Renderer *render);
+   
 
     /*事件捕获操作*/
     bool get_events();
