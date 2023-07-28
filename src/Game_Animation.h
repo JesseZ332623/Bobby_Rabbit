@@ -41,10 +41,19 @@ typedef struct Animation_Info
 /*帧的 rect 结构体 用于规定图片的裁剪范围和播放坐标*/
 typedef struct _Frame_Rect_
 {
-    SDL_Rect up_down_left_right_rect;
+    /*上下左右行走 动画的相关 rect 参数 一共 8 帧*/
+    SDL_Rect u_d_l_r_rect_frames[8];
+   
+    /*向左行走的 目标 rect 参数*/
+    SDL_Rect left_dest_rect;
+
+    /*向右行走的 目标 rect 参数*/
+    SDL_Rect right_dest_rect;
+
     SDL_Rect death_rect;
     SDL_Rect fade_rect;
 
+    /*不耐烦的等待 动画的相关 rect 参数 一共 3 帧*/
     SDL_Rect wait_rect_frame_1;
     SDL_Rect wait_rect_frame_2;
     SDL_Rect wait_rect_frame_3;
@@ -55,9 +64,13 @@ typedef struct _Frame_Rect_
 /*加载所有动画图片的 texture 和 surface*/
 void Load_Bobby_Animation(Animation *animation, SDL_Renderer *render);
 
-/*获取 不耐烦的等待 动画的相关 rect 参数*/
-void Get_Wait_Frame_Format(Frame_Rect *frame_rect);
+/*设置 不耐烦的等待 动画的相关 rect 参数*/
+void Set_Wait_Frame_Format(Frame_Rect *frame_rect);
 
+/*设置 向左行走 动画的相关 rect 参数*/
+void Set_Left_Frame_Format(Frame_Rect *frame_rect);
 
+/*设置 向右行走 动画的相关 rect 参数*/
+void Set_Right_Frame_Format(Frame_Rect *frame_rect);
 
 #endif

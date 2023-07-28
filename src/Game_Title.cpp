@@ -101,7 +101,7 @@ void Game_Title::image_render()
 /*动画的渲染相关信息*/
 void Game_Title::animation_render()
 { 
-    Get_Wait_Frame_Format(&frame_rect);
+    Set_Wait_Frame_Format(&frame_rect);
     Load_Bobby_Animation(&animation, rander);
 }
 
