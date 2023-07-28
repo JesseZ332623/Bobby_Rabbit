@@ -63,8 +63,6 @@ void Get_Wait_Frame_Format(Frame_Rect *frame_rect)
     frame_rect->wait_dest_rect.h = block_height;
 }
 
-
-
 #if false
 int main(int argc, char *argv[])
 {
@@ -148,15 +146,11 @@ int main(int argc, char *argv[])
         default:
             current_frame = 0;
             continue;
-        }
-       
-        
-        
+        }  
     }
     
     SDL_Quit();
-
-
+    
     return EXIT_SUCCESS;
 }
 #endif
