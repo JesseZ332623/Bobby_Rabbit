@@ -104,6 +104,88 @@ void Set_Right_Frame_Format(Frame_Rect *frame_rect)
     frame_rect->right_dest_rect.h = block_height;
 }
 
+/*设置 向上行走 动画的相关 rect 参数*/
+void Set_Up_Frame_Format(Frame_Rect *frame_rect)
+{
+    int block_width = 36; // 288 / 8
+    int block_height = 50;
+    int frame = 8;
+
+    for (int cur_frame = 0; cur_frame < frame; ++cur_frame)
+    {
+        frame_rect->u_d_l_r_rect_frames[cur_frame].x = cur_frame * block_width;
+        frame_rect->u_d_l_r_rect_frames[cur_frame].y = 0;
+        frame_rect->u_d_l_r_rect_frames[cur_frame].h = block_height;
+        frame_rect->u_d_l_r_rect_frames[cur_frame].w = block_width;
+    } 
+    frame_rect->up_dest_rect.x = 400;
+    frame_rect->up_dest_rect.y = 800;
+    frame_rect->up_dest_rect.w = block_width;
+    frame_rect->up_dest_rect.h = block_height;
+}
+
+/*设置 向下走 动画的相关 rect 参数*/
+void Set_Down_Frame_Format(Frame_Rect *frame_rect)
+{
+    int block_width = 36; // 288 / 8
+    int block_height = 50;
+    int frame = 8;
+
+    for (int cur_frame = 0; cur_frame < frame; ++cur_frame)
+    {
+        frame_rect->u_d_l_r_rect_frames[cur_frame].x = cur_frame * block_width;
+        frame_rect->u_d_l_r_rect_frames[cur_frame].y = 0;
+        frame_rect->u_d_l_r_rect_frames[cur_frame].h = block_height;
+        frame_rect->u_d_l_r_rect_frames[cur_frame].w = block_width;
+    } 
+    frame_rect->down_dest_rect.x = 400;
+    frame_rect->down_dest_rect.y = 0;
+    frame_rect->down_dest_rect.w = block_width;
+    frame_rect->down_dest_rect.h = block_height;
+}
+
+/*设置 死亡 动画的相关 rect 参数*/
+void Set_Death_Frame_Format(Frame_Rect *frame_rect)
+{
+    int block_width = 54;
+    int block_height = 352;
+    int frame = 8;
+
+    for (int cur_frame = 0; cur_frame < frame; ++cur_frame)
+    {
+        frame_rect->death_rect[cur_frame].x = cur_frame * block_width;
+        frame_rect->death_rect[cur_frame].y = 0;
+        frame_rect->death_rect[cur_frame].h = block_height;
+        frame_rect->death_rect[cur_frame].w = block_width;
+    }
+
+    frame_rect->death_dest_rect.x = 250;
+    frame_rect->death_dest_rect.y = 300;
+    frame_rect->death_dest_rect.h = block_height;
+    frame_rect->death_dest_rect.y = block_width;
+}
+
+/*设置 消失 动画的相关 rect 参数*/
+void Set_Fade_Frame_Format(Frame_Rect *frame_rect)
+{
+    int block_width = 324 / 9;
+    int block_height = 50;
+    int frame = 9;
+
+    for (int cur_frame = 0; cur_frame < frame; ++cur_frame)
+    {
+        frame_rect->death_rect[cur_frame].x = cur_frame * block_width;
+        frame_rect->death_rect[cur_frame].y = 0;
+        frame_rect->death_rect[cur_frame].h = block_height;
+        frame_rect->death_rect[cur_frame].w = block_width;
+    }
+
+    frame_rect->fade_dest_rect.x = 475;
+    frame_rect->fade_dest_rect.y = 600;
+    frame_rect->fade_dest_rect.h = block_height;
+    frame_rect->fade_dest_rect.w = block_width;
+}
+
 #if true
 int main(int argc, char *argv[])
 {
@@ -125,13 +207,16 @@ int main(int argc, char *argv[])
     Set_Wait_Frame_Format(&frames);
     Set_Right_Frame_Format(&frames);
     Set_Left_Frame_Format(&frames);
+    Set_Up_Frame_Format(&frames);
+    Set_Down_Frame_Format(&frames);
+    Set_Death_Frame_Format(&frames);
+    Set_Fade_Frame_Format(&frames);
 
     bool if_quit = false;
     bool right_walk = true;
     bool left_walk = true;
 
     int current_frame_right = 0;
-    int current_frame_left = 0;
     int current_frame_wait = 0;
 
     while (!if_quit)
@@ -146,81 +231,145 @@ int main(int argc, char *argv[])
         SDL_RenderClear(render);
 
         ++current_frame_right;
-        //++current_frame_left;
+        
         switch (current_frame_right)
         {
         case 1:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[0], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[0], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[0], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[0], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_1, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[0], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
             SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 2:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[1], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[1], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[1], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[1], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_2, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[1], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
-            SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            SDL_Delay(33);
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 3:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[2], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[2], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[2], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[2], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_3, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[2], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
             SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 4:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[3], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[3], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[3], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[3], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.u_d_l_r_rect_frames[3], &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_1, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[3], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
-            SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            SDL_Delay(33);
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 5:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[4], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[4], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[4], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[4], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_2, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[4], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
             SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 6:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[5], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[5], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[5], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[5], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_3, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[5], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
             SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 7:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[6], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[6], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[6], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[6], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_1, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[6], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
             SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
         case 8:
             SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[7], &frames.right_dest_rect);
             SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[7], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[7], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[7], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_2, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[7], &frames.fade_dest_rect);
             SDL_RenderPresent(render);
             SDL_RenderClear(render);
             SDL_Delay(35);
-            frames.right_dest_rect.x += 5;
-            frames.left_dest_rect.x -= 5;
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
             continue;
+        case 9:
+            SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[0], &frames.right_dest_rect);
+            SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[0], &frames.left_dest_rect);
+            SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[0], &frames.up_dest_rect);
+            SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[0], &frames.down_dest_rect);
+            SDL_RenderCopy(render, animations.wait_texture, &frames.wait_rect_frame_1, &frames.wait_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[0], &frames.fade_dest_rect);
+            SDL_RenderCopy(render, animations.fade_texture, &frames.fade_rect[8], &frames.fade_dest_rect);
+            SDL_RenderPresent(render);
+            SDL_RenderClear(render);
+            SDL_Delay(35);
+            frames.right_dest_rect.x += 3;
+            frames.left_dest_rect.x -= 3;
+            frames.up_dest_rect.y -= 3;
+            frames.down_dest_rect.y += 3;
         default:
             current_frame_right = 0;
             continue;
