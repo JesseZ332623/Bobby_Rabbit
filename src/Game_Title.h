@@ -1,6 +1,8 @@
 #ifndef _GAME_TITLE_H_
 #define _GAME_TITLE_H_
+
 #include <iostream>
+#include <algorithm>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -44,7 +46,7 @@ private:
     std::string enter_arrow_path;
 
     Animation animation;           /*动画素材的texture 和 surface*/
-    Frame_Rect frame_rect;
+    Frame_Rect frame_rect;         /*帧的 rect 结构体 用于规定图片的裁剪范围和播放坐标*/
    
 
     bool if_quit;
@@ -54,15 +56,22 @@ private:
     int font_size;
     TTF_Font *title_options;         /*TTF字体对象*/
     SDL_Color font_color;            /*字体颜色对象*/
+
     SDL_Surface *font_surface_press_enter;  /*字体 surface 对象*/
     SDL_Surface *font_surface_start; 
     SDL_Surface *font_surface_quit;
+    SDL_Surface *font_surface_level_1;
+
     SDL_Texture *font_press_enter_texture;  /*字体纹理对象*/
     SDL_Texture *font_start_texture;
     SDL_Texture *font_quit_texture;
+    SDL_Texture *font_texture_level_1;
+
     SDL_Rect font_rect_press_enter;     /*字体渲染信息*/
     SDL_Rect font_rect_start;        
     SDL_Rect font_rect_quit;
+    SDL_Rect font_rect_level_1;
+
     std::string ttf_font_path;
 
     std::string blm_file_path;          /*地图渲染信息*/
@@ -70,6 +79,8 @@ private:
 
     int frame_duration;                 /*帧率控制*/
     Uint32 render_start, render_end;
+
+    const Uint8 *key_state;
     
 public:
     /*类构建函数  初始化所有私有成员*/
@@ -85,7 +96,8 @@ public:
     bool window_render_resource();
     void image_render();        /*渲染图片*/
     void ttf_font_render();     /*渲染字体*/
-    void animation_render();    /*兔子动画的渲染信息*/
+    void animation_render();    /*兔子动画的渲染信息 (menu)*/
+    void animation_render_in_game();    /*兔子动画的渲染信息 (game)*/
     void map_render();          /*地图的动画渲染信息*/
 
    
