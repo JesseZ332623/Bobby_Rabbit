@@ -31,6 +31,7 @@ class Game_Title
 private:
     SDL_Window *basic_window;        /*窗口对象*/
     SDL_Renderer *rander;            /*渲染器对象*/
+    SDL_Renderer *bobby_render;
 
     Mix_Chunk *title_music;          /*背景音乐对象*/
     std::string title_music_path;

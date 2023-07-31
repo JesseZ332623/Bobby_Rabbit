@@ -117,9 +117,9 @@ void Set_Up_Frame_Format(Frame_Rect *frame_rect)
         frame_rect->u_d_l_r_rect_frames[cur_frame].y = 0;
         frame_rect->u_d_l_r_rect_frames[cur_frame].h = block_height;
         frame_rect->u_d_l_r_rect_frames[cur_frame].w = block_width;
-    } 
-    frame_rect->up_dest_rect.x = 400;
-    frame_rect->up_dest_rect.y = 800;
+    }
+    frame_rect->up_dest_rect.x = 0;
+    frame_rect->up_dest_rect.y = 0;
     frame_rect->up_dest_rect.w = block_width;
     frame_rect->up_dest_rect.h = block_height;
 }
@@ -137,7 +137,7 @@ void Set_Down_Frame_Format(Frame_Rect *frame_rect)
         frame_rect->u_d_l_r_rect_frames[cur_frame].y = 0;
         frame_rect->u_d_l_r_rect_frames[cur_frame].h = block_height;
         frame_rect->u_d_l_r_rect_frames[cur_frame].w = block_width;
-    } 
+    }
     frame_rect->down_dest_rect.x = 400;
     frame_rect->down_dest_rect.y = 0;
     frame_rect->down_dest_rect.w = block_width;
@@ -196,12 +196,16 @@ int main(int argc, char *argv[])
                                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                                 800, 800,
                                                 SDL_WINDOW_SHOWN);
+    SDL_SetWindowInputFocus(basic_window);
     SDL_Renderer *render = SDL_CreateRenderer(basic_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     Animation animations;
     Frame_Rect frames;
 
     SDL_Event events;
+
+    SDL_Rect animations_pos = {0 , 0, 36, 50};
+
 
     Load_Bobby_Animation(&animations, render);
     Set_Wait_Frame_Format(&frames);
@@ -214,200 +218,127 @@ int main(int argc, char *argv[])
 
     bool if_quit = false;
 
-    bool left_walk = false;
-    bool right_walk = true;
+    bool if_left_walk = false;
+    bool if_right_walk = false;
+    bool if_up_walk = false;
+    bool if_down_walk = false;
 
+    int current_frame_left = 0;
     int current_frame_right = 0;
-    int current_frame_wait = 0;
+    int current_frame_up = 0;
+    int current_frame_down = 0;
 
+    SDL_PumpEvents();
+
+    frames.up_dest_rect.x = frames.up_dest_rect.y = 0;
+    frames.down_dest_rect.x = frames.down_dest_rect.y = 0;
+    frames.left_dest_rect.x = frames.left_dest_rect.y = 0;
+    frames.right_dest_rect.x = frames.right_dest_rect.y = 0;
+
+#if true
     while (!if_quit)
     {
         while (SDL_PollEvent(&events))
         {
-            if (events.type == SDL_QUIT)
+            if (events.type == SDL_KEYDOWN)
             {
+                switch (events.key.keysym.scancode)
+                {
+                case SDL_SCANCODE_W:
+                    if_up_walk = true;
+                    break;
+
+                case SDL_SCANCODE_A:
+                    if_left_walk = true;
+                    break;
+
+                case SDL_SCANCODE_S:
+                    if_down_walk = true;
+                    break;
+
+                case SDL_SCANCODE_D:
+                    if_right_walk = true;
+                    break;
+
+                default:
+                    break;
+                }
+            }
+            else if (events.type == SDL_KEYUP)
+            {
+                switch (events.key.keysym.scancode)
+                {
+                case SDL_SCANCODE_W:
+                    if_up_walk = false;
+                    break;
+
+                case SDL_SCANCODE_A:
+                    if_left_walk = false;
+                    break;
+
+                case SDL_SCANCODE_S:
+                    if_down_walk = false;
+                    break;
+
+                case SDL_SCANCODE_D:
+                    if_right_walk = false;
+                    break;
+                }
+            }
+            else if (events.type == SDL_QUIT)
+            {
+                SDL_Log("Quit\n");
                 if_quit = true;
             }
         }
-        SDL_RenderClear(render);
-
-
-        ++current_frame_right;
-        if (frames.right_dest_rect.x + frames.right_dest_rect.w >= 800)
+        if (if_right_walk)
         {
-            left_walk = true;
-            right_walk = false;
+            for (int i = 0; i < 8; i++)
+            {
+                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[i], &animations_pos);
+                SDL_RenderPresent(render);
+                SDL_RenderClear(render);
+                animations_pos.x += 2;
+                SDL_Delay(15);
+            } 
         }
-        
-        
-        switch (current_frame_right)
+        else if (if_left_walk)
         {
-        case 1:
-            if (right_walk)
+            for (int i = 0; i < 8; i++)
             {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[0], &frames.right_dest_rect);
+
+                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[i], &animations_pos);
                 SDL_RenderPresent(render);
                 SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
+                animations_pos.x -= 2;
+                SDL_Delay(15);
+            } 
+        }
+        else if (if_up_walk)
+        {
+            for (int i = 0; i < 8; i++)
             {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[0], &frames.left_dest_rect);
+                SDL_RenderCopy(render, animations.up_texture, &frames.u_d_l_r_rect_frames[i], &animations_pos);
                 SDL_RenderPresent(render);
                 SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 2:
-            if (right_walk)
+                animations_pos.y -= 2;
+                SDL_Delay(15);
+            } 
+        }
+        else if (if_down_walk)
+        {
+            for (int i = 0; i < 8; i++)
             {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[1], &frames.right_dest_rect);
+                SDL_RenderCopy(render, animations.down_texture, &frames.u_d_l_r_rect_frames[i], &animations_pos);
                 SDL_RenderPresent(render);
                 SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[1], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 3:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[2], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[2], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 4:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[3], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[3], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 5:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[4], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[4], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 6:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[5], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[5], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 7:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[6], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[6], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 8:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[7], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[7], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-            continue;
-        case 9:
-            if (right_walk)
-            {
-                SDL_RenderCopy(render, animations.right_texture, &frames.u_d_l_r_rect_frames[8], &frames.right_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.right_dest_rect.x += 3;
-            }
-            else if (left_walk)
-            {
-                SDL_RenderCopy(render, animations.left_texture, &frames.u_d_l_r_rect_frames[8], &frames.left_dest_rect);
-                SDL_RenderPresent(render);
-                SDL_RenderClear(render);
-                SDL_Delay(35);
-                frames.left_dest_rect.x -= 3;
-            }
-        default:
-            current_frame_right = 0;
-            continue;
+                animations_pos.y += 2;
+                SDL_Delay(15);
+            }         
         }
     }
+#endif
+
     SDL_Quit();
     return EXIT_SUCCESS;
 }
